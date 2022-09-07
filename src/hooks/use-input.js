@@ -10,7 +10,7 @@ const useInput = (validateValue) => {
     const valueChangeHandler = (event) => {
         setEnteredValue(event.target.value)
     };
-    const inputFocusHandler = (event) => {
+    const inputFocusHandler = () => {
         setIsTouch(true);
     };
     const reset= ()=>{

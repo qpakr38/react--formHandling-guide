@@ -1,67 +1,41 @@
-import {useEffect, useState} from "react";
+import useForm from "../hooks/use-form";
 
 const BasicForm = (props) => {
-    const [enteredFirstName, setEnteredFirstName] = useState('');
-    const [firstNameIsTouch, setFirstNameIsTouch] = useState(false);
-    const [enteredLastName, setEnteredLastName] = useState('');
-    const [lastNameIsTouch, setLastNameIsTouch] = useState(false);
-    const [enteredEmail, setEnteredEmail] = useState('');
-    const [emailIsTouch, setEmailIsTouch] = useState(false);
-    useEffect(()=>{
-        console.log("firstNameIsValid : "+firstNameIsValid);
-        console.log("firstNameIsTouch : "+firstNameIsTouch);
-        console.log("lastNameIsValid : "+lastNameIsValid);
-        console.log("lastNameIsTouch : "+lastNameIsTouch);
-        console.log("emailIsValid : "+emailIsValid);
-        console.log("emailIsTouch : "+emailIsTouch);
-    })
-    const firstNameInputChange = (event) => {
-        setEnteredFirstName(event.target.value);
-    };
-    const lastNameInputChange = (event) => {
-        setEnteredLastName(event.target.value);
-    };
-    const emailInputChange = (event) => {
-        setEnteredEmail(event.target.value);
-    };
-
-    const firstNameInputFocus = () => {
-        setFirstNameIsTouch(true);
-    };
-    const lastNameInputFocus = () => {
-        setLastNameIsTouch(true);
-    };
-    const emailInputFocus = () => {
-        setEmailIsTouch(true);
-    };
-
-    let firstNameIsValid = false;
-    if (enteredFirstName.trim() !== '') {
-        firstNameIsValid = true;
-    }
-    let lastNameIsValid = false;
-    if (enteredLastName.trim() !== '') {
-        lastNameIsValid = true;
-    }
-    let emailIsValid = false;
-    if (enteredEmail.trim().includes('@')) {
-        emailIsValid = true;
-    }
-
-    const firstNameInputClasses = (!firstNameIsValid && firstNameIsTouch) ? 'form-control invalid' : 'form-control';
-    const lastNameInputClasses = (!lastNameIsValid && lastNameIsTouch) ? 'form-control invalid' : 'form-control';
-    const emailInputClasses = (!emailIsValid && emailIsTouch) ? 'form-control invalid' : 'form-control';
+    const {
+        value: enteredFirstName,
+        isValid: firstNameIsValid,
+        hasError: firstNameHasError,
+        valueChangeHandler :firstNameInputChange,
+        inputFocusHandler : firstNameInputFocus,
+        reset : firstNameInputRest
+    }=useForm(value=>value.trim()!=='');
+    const {
+        value: enteredLastName,
+        isValid: lastNameIsValid,
+        hasError: lastNameHasError,
+        valueChangeHandler :lastNameInputChange,
+        inputFocusHandler : lastNameInputFocus,
+        reset : lastNameInputRest
+    }=useForm(value=>value.trim()!=='');
+    const {
+        value: enteredEmail,
+        isValid: emailIsValid,
+        hasError: emailHasError,
+        valueChangeHandler :emailInputChange,
+        inputFocusHandler : emailInputFocus,
+        reset : emailInputRest
+    } =useForm(value => value.includes('@'));
+    const firstNameInputClasses = firstNameHasError ? 'form-control invalid' : 'form-control';
+    const lastNameInputClasses = lastNameHasError ? 'form-control invalid' : 'form-control';
+    const emailInputClasses = emailHasError ? 'form-control invalid' : 'form-control';
 
     const formIsValid = firstNameIsValid &&lastNameIsValid && emailIsValid;
 
     const formSubmissionHandler=(event)=>{
         event.preventDefault();
-        setEnteredFirstName('');
-        setEnteredLastName('');
-        setEnteredEmail('');
-        setFirstNameIsTouch(false);
-        setLastNameIsTouch(false);
-        setEmailIsTouch(false);
+        firstNameInputRest();
+        lastNameInputRest();
+        emailInputRest();
     };
     return (
         <form onSubmit={formSubmissionHandler}>
@@ -74,7 +48,7 @@ const BasicForm = (props) => {
                         value={enteredFirstName}
                         type='text' id='firstName'
                     />
-                    {(!firstNameIsValid && firstNameIsTouch) ?
+                    { firstNameHasError ?
                         <p className="error-text">Name must not be empty.</p> : ' '}
                 </div>
                 <div className={lastNameInputClasses}>
@@ -86,7 +60,7 @@ const BasicForm = (props) => {
                         type='text'
                         id='lastName'
                     />
-                    {(!lastNameIsValid && lastNameIsTouch) ?
+                    { lastNameHasError ?
                         <p className="error-text">Name must not be empty.</p> : ' '}
                 </div>
             </div>
@@ -97,7 +71,7 @@ const BasicForm = (props) => {
                        value={enteredEmail}
                        type='text'
                        id='email'/>
-                {(!emailIsValid && emailIsTouch) ? <p className="error-text">Please check your email.</p> : ' '}
+                {emailHasError ? <p className="error-text">Please check your email.</p> : ' '}
             </div>
             <div className='form-actions'>
                 <button disabled={!formIsValid}>Submit</button>
