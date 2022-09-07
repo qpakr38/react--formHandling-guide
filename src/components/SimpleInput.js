@@ -23,7 +23,10 @@ const SimpleInput = (props) => {
 
     const nameInputChangeHandler = (event) => {
         setEnteredName(event.target.value);
-        setEnteredNameTouched(true)
+        if (enteredName.trim() !== '') {
+            setEnteredNameIsValid(true);
+            return;
+        }
     };
 
     const formSubmissionHandler = (event) => {
